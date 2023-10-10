@@ -1,6 +1,7 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { verticalScale } from '../Metric';
 
 const SavedDataScreen = () => {
   const [storeData, setStoreData] = useState([]);
@@ -21,15 +22,25 @@ const SavedDataScreen = () => {
     getStoreValue();
   }, []);
 
+  console.log(storeData, 'storeData');
   return (
-    <View>
+    <View style={styles.container}>
+      <Text style={styles.save}>Recent Save Journey</Text>
       <FlatList
+        contentContainerStyle={{paddingBottom: 340}}
         data={storeData}
         renderItem={({item}) => (
-          <View>
-            <Text>Speed:{item?.location?.speed}</Text>
-            <Text>Longtitude:{item?.location?.longitude}</Text>
-            <Text>Latitude:{item?.location?.latitude}</Text>
+          <View style={styles.storeContainer}>
+            <Text style={styles.text}>Speed:{item?.location?.speed}</Text>
+            <Text style={styles.text}>
+              Longtitude:{item?.location?.longitude}
+            </Text>
+            <Text style={styles.text}>Latitude:{item?.location?.latitude}</Text>
+            <Text style={styles.text}>Speed:{item?.metric?.speed}</Text>
+            <Text style={styles.text}>Wind:{item?.weather?.wind}</Text>
+            <Text style={styles.text} s>
+              Rain:{item?.weather?.description}
+            </Text>
           </View>
         )}
       />
@@ -39,4 +50,28 @@ const SavedDataScreen = () => {
 
 export default SavedDataScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  storeContainer: {
+    marginVertical: 10,
+    backgroundColor: 'white',
+    borderWidth: 0.4,
+    borderColor: 'grey',
+    padding: 20,
+    width: '80%',
+    margin: 30,
+  },
+  text: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  save: {
+    fontWeight: 'bold',
+    margin: 30,
+    color: 'orange',
+    fontSize:verticalScale(20)
+  },
+});
