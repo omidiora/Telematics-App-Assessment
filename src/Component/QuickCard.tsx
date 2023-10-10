@@ -3,9 +3,9 @@ import React from 'react';
 import {horizontalScale, verticalScale} from '../Metric';
 
 interface QuickCardProps {
-  image: string;
+  image: React.ReactElement| string;
   subTitle: string;
-  onPress: () => void;
+  onPress?: () => void;
   url?: string;
   title:string;
 }

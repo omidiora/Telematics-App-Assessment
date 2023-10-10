@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import GetLocation from 'react-native-get-location';
 import {BODY_IMAGE} from '../util';
@@ -23,30 +24,31 @@ import {
   getLocation,
 } from 'react-native-weather-api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const generateRandomMetrics = () => {
   const speed = Math.random() * 120; // Speed in km/h
   const rpm = Math.random() * 8000; // RPM (revolutions per minute)
   const fuelLevel = Math.random() * 100; // Fuel level in percentage
   const engineTemperature = Math.random() * 100; // Engine temperature in °C
-  const latitude = Math.random() * 180 - 90; // Latitude (-90 to 90)
-  const longitude = Math.random() * 360 - 180; // Longitude (-180 to 180)
 
   return {
     speed,
     rpm,
     fuelLevel,
     engineTemperature,
-    latitude,
-    longitude,
   };
 };
 
 const TelematicsApp = () => {
   const [metrics, setMetrics] = useState(generateRandomMetrics());
-  const [isJourneyActive, setIsJourneyActive] = useState(false);
-  const [getLocations, SetLocation] = useState({});
-  const [weather, setWeather] = useState({});
+  const [isJourneyActive, setIsJourneyActive] = useState<boolean>(false);
+  const [getLocations, SetLocation] = useState<{}>({});
+  const [weather, setWeather] = useState<{}>({});
+  const [currentFuelLevel, setCurrentFuelLevel] = useState<number>(0); // Current fuel level in gallons/liters
+  const [mileage, setMileage] = useState<number>(0); // Distance traveled since last refill in miles/kilometers
+  const [fuelConsumptionRate, setFuelConsumptionRate] = useState<number>(0); // Fuel consumption rate (MPG or LPK)
+  const [animate, setAnimate] = useState<boolean>(false);
 
   const saveItemKeyword = async keyword => {
     try {
@@ -66,6 +68,15 @@ const TelematicsApp = () => {
       console.error('Error saving search keyword to local storage:', error);
     }
   };
+
+  useEffect(() => {
+    setMetrics(prevState => ({
+      ...prevState,
+      speed: 0,
+      rpm: 0,
+      engineTemperature: 0,
+    }));
+  }, []);
 
   useEffect(() => {
     let temp;
@@ -89,6 +100,25 @@ const TelematicsApp = () => {
   }, []);
 
   useEffect(() => {
+    // Calculate and update fuel consumption rate based on data from the database
+    // Update currentFuelLevel and mileage as per the vehicle's usage
+
+    // Calculate the predicted fuel level
+    const fuelThreshold = 1 / 4; // Example: 1/4 tank
+    const predictedFuelLevel = currentFuelLevel - fuelConsumptionRate * mileage;
+
+    // Trigger animation if predicted fuel level is below the threshold
+    if (predictedFuelLevel <= fuelThreshold) {
+      // Display an alert
+      Alert.alert(
+        'Fuel Refill Alert',
+        'Your fuel level is approaching the refill threshold. Consider refilling soon.',
+        [{text: 'Dismiss', onPress: () => setAnimate(true)}],
+      );
+    }
+  }, [currentFuelLevel, mileage, fuelConsumptionRate]);
+
+  useEffect(() => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 60000,
@@ -98,13 +128,18 @@ const TelematicsApp = () => {
       })
       .catch(error => {
         const {code, message} = error;
-        console.warn(code, message, '111');
+        console.warn(code, message);
       });
   }, []);
 
   const startJourney = () => {
     setIsJourneyActive(true);
     startDataCapture();
+  };
+
+  const endJourney = () => {
+    setIsJourneyActive(false);
+    stopDataCapture();
     saveItemKeyword({
       location: getLocations,
       weather: weather,
@@ -113,11 +148,12 @@ const TelematicsApp = () => {
       fuel: metrics.fuelLevel.toFixed(2),
       rpm: metrics.rpm.toFixed(2),
     });
-  };
-
-  const endJourney = () => {
-    setIsJourneyActive(false);
-    stopDataCapture();
+    setMetrics(prevState => ({
+      ...prevState,
+      speed: 0,
+      rpm: 0,
+      engineTemperature: 0,
+    }));
   };
 
   const startDataCapture = () => {
@@ -143,7 +179,11 @@ const TelematicsApp = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{paddingBottom: 20}}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}>
       <ImageBackground
         source={BODY_IMAGE.card}
         style={styles.card}
@@ -205,19 +245,19 @@ const TelematicsApp = () => {
         <QuickCard
           image={<Entypo name="location-pin" size={50} color={'green'} />}
           subTitle="GPS(Lat.)"
-          title={getLocation.latitude?.toFixed(5)}
+          title={getLocations.latitude?.toFixed(2)}
         />
         <QuickCard
           image={<Entypo name="location-pin" size={50} color={'green'} />}
           subTitle="GPS(Long.)"
-          title={getLocation.longitude?.toFixed(2)}
+          title={getLocations.longitude?.toFixed(2)}
         />
 
         <QuickCard
           image={
             <FontAwesome6
               name={
-                metrics.fuelLevel.toFixed(2) <= 30
+                metrics?.fuelLevel.toFixed(2) <= 30
                   ? 'temperature-half'
                   : 'temperature-high'
               }
@@ -270,7 +310,7 @@ const TelematicsApp = () => {
           title={weather?.humidity}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

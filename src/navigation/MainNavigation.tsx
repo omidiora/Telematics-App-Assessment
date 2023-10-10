@@ -4,6 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import TelematicsApp from '../screen/Temperature';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SavedDataScreen from '../screen/SavedDataScreen';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,27 +15,26 @@ function MainNavigation() {
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
-          if (route.name === 'Home') {
-            iconName = focused
-              ? 'ios-information-circle'
-              : 'ios-information-circle-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'ios-list' : 'ios-list-outline';
+          if (route.name === 'Dashboard') {
+            iconName = 'dashboard';
+          } else if (route.name === 'Store') {
+            iconName = 'store';
           }
 
           // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <MaterialIcons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
         header: () => null,
       })}>
       <Tab.Screen
-        name="Home"
+        name="Dashboard"
         component={TelematicsApp}
-        options={{tabBarBadge: 3, tabBarLabel: 'Profile'}}
+        options={{tabBarLabel: 'Dashboard'}}
       />
-      <Tab.Screen name="Settings" component={SavedDataScreen} />
+      <Tab.Screen name="Store" component={SavedDataScreen} 
+        options={{tabBarLabel: 'Store Data'}}/>
     </Tab.Navigator>
   );
 }

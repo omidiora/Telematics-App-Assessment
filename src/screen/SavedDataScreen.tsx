@@ -1,7 +1,7 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { verticalScale } from '../Metric';
+import {verticalScale} from '../Metric';
 
 const SavedDataScreen = () => {
   const [storeData, setStoreData] = useState([]);
@@ -14,7 +14,6 @@ const SavedDataScreen = () => {
       }
     } catch (e) {
       // error reading value
-      console.log(e, 'amldkmlamdlmalmdlm');
     }
   };
 
@@ -22,25 +21,26 @@ const SavedDataScreen = () => {
     getStoreValue();
   }, []);
 
-  console.log(storeData, 'storeData');
+
   return (
     <View style={styles.container}>
       <Text style={styles.save}>Recent Save Journey</Text>
       <FlatList
         contentContainerStyle={{paddingBottom: 340}}
         data={storeData}
+        ListEmptyComponent={() => (
+          <Text style={styles.noSaved}>No Saved Data</Text>
+        )}
         renderItem={({item}) => (
+          console.log(item?.metric?.speed),
           <View style={styles.storeContainer}>
-            <Text style={styles.text}>Speed:{item?.location?.speed}</Text>
+            <Text style={styles.text}>Speed:{item?.metric?.speed?.toFixed(2)}</Text>
             <Text style={styles.text}>
               Longtitude:{item?.location?.longitude}
             </Text>
             <Text style={styles.text}>Latitude:{item?.location?.latitude}</Text>
-            <Text style={styles.text}>Speed:{item?.metric?.speed}</Text>
             <Text style={styles.text}>Wind:{item?.weather?.wind}</Text>
-            <Text style={styles.text} s>
-              Rain:{item?.weather?.description}
-            </Text>
+            <Text style={styles.text}>Rain:{item?.weather?.description}</Text>
           </View>
         )}
       />
@@ -72,6 +72,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 30,
     color: 'orange',
-    fontSize:verticalScale(20)
+    fontSize: verticalScale(20),
+  },
+  noSaved: {
+    fontWeight: 'bold',
+    marginLeft: 29,
+    fontSize: 18,
+    color: 'black',
   },
 });
