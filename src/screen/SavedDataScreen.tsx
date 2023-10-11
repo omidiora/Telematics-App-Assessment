@@ -1,7 +1,8 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View, Alert} from 'react-native';
 import React, {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {verticalScale} from '../Metric';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SavedDataScreen = () => {
   const [storeData, setStoreData] = useState([]);
@@ -13,13 +14,19 @@ const SavedDataScreen = () => {
         setStoreData(JSON.parse(value));
       }
     } catch (e) {
+      Alert.alert('Something went wrong');
       // error reading value
     }
   };
 
-  React.useEffect(() => {
-    getStoreValue();
-  }, [storeData]);
+
+  useFocusEffect(() => {
+    getStoreValue()
+ },)
+ 
+  // React.useEffect(() => {
+  //   getStoreValue();
+  // }, [storeData, ]);
 
   return (
     <View style={styles.container}>
