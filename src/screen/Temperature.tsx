@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import GetLocation from 'react-native-get-location';
-import {BODY_IMAGE} from '../util';
+import {BODY_IMAGE, NofifySuccess} from '../util';
 import {horizontalScale, verticalScale} from '../Metric';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import QuickCard from '../Component/QuickCard';
@@ -63,9 +63,8 @@ const TelematicsApp = () => {
 
       // Save the updated keywords array to storage
       await AsyncStorage.setItem('SaveItem', JSON.stringify(existingKeywords));
-      console.log('Search keyword saved to local storage.');
     } catch (error) {
-      console.error('Error saving search keyword to local storage:', error);
+      Alert.alert('Somee went wrong');
     }
   };
 
@@ -100,14 +99,9 @@ const TelematicsApp = () => {
   }, []);
 
   useEffect(() => {
-    // Calculate and update fuel consumption rate based on data from the database
-    // Update currentFuelLevel and mileage as per the vehicle's usage
-
-    // Calculate the predicted fuel level
     const fuelThreshold = 1 / 4; // Example: 1/4 tank
     const predictedFuelLevel = currentFuelLevel - fuelConsumptionRate * mileage;
 
-    // Trigger animation if predicted fuel level is below the threshold
     if (predictedFuelLevel <= fuelThreshold) {
       // Display an alert
       Alert.alert(
@@ -135,6 +129,7 @@ const TelematicsApp = () => {
   const startJourney = () => {
     setIsJourneyActive(true);
     startDataCapture();
+    NofifySuccess('Journey Start', 'Journey Has Started');
   };
 
   const endJourney = () => {
@@ -148,28 +143,14 @@ const TelematicsApp = () => {
       fuel: metrics.fuelLevel.toFixed(2),
       rpm: metrics.rpm.toFixed(2),
     });
-    setMetrics(prevState => ({
-      ...prevState,
-      speed: 0,
-      rpm: 0,
-      engineTemperature: 0,
-    }));
+    NofifySuccess('Journey End', 'Journey Has Ended');
   };
 
   const startDataCapture = () => {
     const interval = setInterval(() => {
       const newMetrics = generateRandomMetrics();
       setMetrics(newMetrics);
-
-      // Check for abnormal values and display warnings
-      if (newMetrics.engineTemperature > 95) {
-        // Alert.alert('Warning', 'High engine temperature detected!');
-      }
-
-      if (newMetrics.fuelLevel < 20) {
-        // Alert.alert('Warning', 'Low fuel level detected!');
-      }
-    }, 5000); // Update every 5 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
   };

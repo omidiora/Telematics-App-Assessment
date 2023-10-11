@@ -7,6 +7,7 @@ import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import {createStackNavigator} from '@react-navigation/stack';
 import TelematicsApp from './src/screen/Temperature';
 import MainNavigation from './src/navigation/MainNavigation';
+import {AlertNotificationRoot} from 'react-native-alert-notification';
 
 const Stack = createStackNavigator();
 
@@ -14,17 +15,19 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.rootContainer}>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Main"
-              component={MainNavigation}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <AlertNotificationRoot>
+          <NavigationContainer>
+            <Stack.Navigator>
+              <Stack.Screen
+                name="Main"
+                component={MainNavigation}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </AlertNotificationRoot>
       </SafeAreaView>
     </SafeAreaProvider>
   );

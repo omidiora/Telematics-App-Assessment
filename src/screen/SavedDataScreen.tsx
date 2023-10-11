@@ -19,8 +19,7 @@ const SavedDataScreen = () => {
 
   React.useEffect(() => {
     getStoreValue();
-  }, []);
-
+  }, [storeData]);
 
   return (
     <View style={styles.container}>
@@ -32,9 +31,10 @@ const SavedDataScreen = () => {
           <Text style={styles.noSaved}>No Saved Data</Text>
         )}
         renderItem={({item}) => (
-          console.log(item?.metric?.speed),
           <View style={styles.storeContainer}>
-            <Text style={styles.text}>Speed:{item?.metric?.speed?.toFixed(2)}</Text>
+            <Text style={styles.text}>
+              Speed:{item?.metric?.speed?.toFixed(2)}
+            </Text>
             <Text style={styles.text}>
               Longtitude:{item?.location?.longitude}
             </Text>
