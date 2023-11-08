@@ -1,4 +1,6 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+<img width="578" alt="Screenshot 2023-11-08 at 12 04 51 PM" src="https://github.com/omidiora/Telematics-App-Assessment/assets/45630269/2b85ec56-249e-4e89-ab72-4f6f3ae4801c">
+<img width="453" alt="Screenshot 2023-11-08 at 12 04 26 PM" src="https://github.com/omidiora/Telematics-App-Assessment/assets/45630269/8c31aa31-2403-4ac3-931f-17b3e70abb46"><img width="535" alt="Screenshot 2023-11-08 at 12 04 39 PM" src="https://github.com/omidiora/Telematics-App-Assessment/assets/45630269/828fb15e-519c-45c1-884e-87471158efb1">
+
 
 # Getting Started
 
